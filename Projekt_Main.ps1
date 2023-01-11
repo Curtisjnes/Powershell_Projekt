@@ -27,11 +27,19 @@ function menue (){
 
 function Get-Input{
         param($input)
+      
+      if($input -eq "3"){
+        Write-Host "hello"
+      }else{
+        Write-Host "HALLO"
+      }
+
     
 }
 
 menue
-
+$input = Read-Host "Eingabe tätigen"
+Get-Input($input)
 
     
 
