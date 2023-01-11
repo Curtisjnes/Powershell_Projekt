@@ -32,7 +32,7 @@ function Get-Input{
 
 
 menue
-$input = Read-Host "Eingabe tätigen "
+
 
     
 
