@@ -6,36 +6,36 @@ Erstellen Sie ein Skript mit folgender Funktionalität:
   
   -Skript bietet folgende Optionen:
   
-    ->alle laufenden Dienste anzeigen.
+    ->alle laufenden Dienste anzeigen. (Done)
     
-    ->alle nichtlaufenden Dienste anzeigen.
+    ->alle nichtlaufenden Dienste anzeigen. (Done)
     
-    ->einen Dienst starten
+    ->einen Dienst starten (Done)
     
-    ->einen Dienst anhalten
+    ->einen Dienst anhalten (Done)
     
     ->einen User anlegen (lokal) nach Eingabe der Userdaten (Tastatur)
-      -->bekommt automatisch Passwort
-      -->bekommt automatisch einen Datenbank auf MySQL
-      -->bekommt automatisch einen Webspace auf XAMPP (Apache, mit Begrüßungs-HTML-Seite nach Vorgabe)
+      -->bekommt automatisch Passwort (Done)
+      -->bekommt automatisch einen Datenbank auf MySQL (In Progress)
+      -->bekommt automatisch einen Webspace auf XAMPP (Apache, mit Begrüßungs-HTML-Seite nach Vorgabe) (In Progress)
       
-    ->mehrere User anlegen (lokal) nach Liste einer Datei
+    ->mehrere User anlegen (lokal) nach Liste einer Datei (In Progress)
     
-    ->einen User löschen (mit dem Löschen aller Dateien)
+    ->einen User löschen (mit dem Löschen aller Dateien) (Done/In Progress)
     
-    ->mehrere User löschen (mit dem Löschen aller Dateien)
+    ->mehrere User löschen (mit dem Löschen aller Dateien) (In Progress)
     
-    ->Netzwerktest (Ping-Test, Traceroute-Test)
+    ->Netzwerktest (Ping-Test, Traceroute-Test) (Done/In Progress)
     
 Abzugeben:
 
-Skript
+Skript (To Do)
 
-Dokumentation
+Dokumentation (To Do)
 
-Kurze Erklärung in Textform
+Kurze Erklärung in Textform (To Do)
 
-Alle Skriptteile visualisiert (PAPs)
+Alle Skriptteile visualisiert PAPs (To Do)
 
 Aufgabenverteilung:
 
