@@ -36,3 +36,6 @@ Dokumentation
 Kurze Erklärung in Textform
 
 Alle Skriptteile visualisiert (PAPs)
+
+Aufgabenverteilung:
+
