@@ -29,7 +29,7 @@ Erstellen Sie ein Skript mit folgender Funktionalität:
     
 Abzugeben:
 
-Skript (To Do)
+Skript (In Progress)
 
 Dokumentation (To Do)
 
