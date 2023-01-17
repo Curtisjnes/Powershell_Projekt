@@ -163,8 +163,10 @@ while ($continue) {
                         $result = Test-Connection -Count $count -Quiet $adresse
                         if(!$result){
                             Write-Host "Error: Unable to establish connection"
+                            Start-Sleep -Seconds 2
                         }else{
                             Test-Connection -Count $count $adresse
+                            Start-Sleep -Seconds 3
                         }
                     }catch{
                         Write-Host "Error: $($_.Exception.Message)"
@@ -176,12 +178,14 @@ while ($continue) {
             }elseif ($auswahl -eq "1"){
                 Write-Host "You chose TraceRoute-Test"
                 $adresse = Read-Host "Which Adress or Website do you want to ping ?"
-                $result = Test-Netconnection $adresse -TraceRoute -InformationLevel "Detailed" 2>$null
-                    if(!$result.PingReply.Status -eq "Success"){
-                        Write-Host "Error: Unable to establish connection"
-                    }else{
-                        Test-Netconnection $adresse -TraceRoute 2>$null
-                    }
+                $result = Test-Connection -Quiet $adresse
+                if(!$result){
+                    Write-Host "Error: Unable to establish connection"
+                    Start-Sleep -Seconds 2
+                }else{
+                    Test-Netconnection $adresse -TraceRoute
+                    Start-Sleep -Seconds 3
+                }
             }else{
                 Write-Host "Invalid input only values 0 and 1 are accepted"
                 Start-Sleep -Seconds 2
