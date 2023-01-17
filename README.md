@@ -33,9 +33,9 @@ Skript (To Do)
 
 Dokumentation (To Do)
 
-Kurze Erklärung in Textform (To Do)
+  ->Kurze Erklärung in Textform (To Do)
 
-Alle Skriptteile visualisiert PAPs (To Do)
+  ->Alle Skriptteile visualisiert PAPs (To Do)
 
 Aufgabenverteilung:
 
