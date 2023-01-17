@@ -25,7 +25,7 @@ Erstellen Sie ein Skript mit folgender Funktionalität:
     
     ->mehrere User löschen (mit dem Löschen aller Dateien) (In Progress)
     
-    ->Netzwerktest (Ping-Test, Traceroute-Test) (Done/In Progress)
+    ->Netzwerktest (Ping-Test, Traceroute-Test) (Done)
     
 Abzugeben:
 
@@ -33,9 +33,9 @@ Skript (To Do)
 
 Dokumentation (To Do)
 
-Kurze Erklärung in Textform (To Do)
+  ->Kurze Erklärung in Textform (To Do)
 
-Alle Skriptteile visualisiert PAPs (To Do)
+  ->Alle Skriptteile visualisiert PAPs (To Do)
 
 Aufgabenverteilung:
 
