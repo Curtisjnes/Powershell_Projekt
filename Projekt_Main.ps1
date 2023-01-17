@@ -1,5 +1,19 @@
 # Create an array of menu options
-$options = @("Alle Dienste anzeigen", "Alle laufende Dienste anzeigen", "Alle nicht laufenden Dienste anzeigen", "Dienst starten", "Dienst stoppen", "Dienst neustarten", "Neuen Nutzer anlegen", "Nutzer löschen", "Nutzer aus Datein anlegen", "Nutzer aus Datei löschen", "Exit")
+$options = @(
+        "Alle Dienste anzeigen", 
+        "Alle laufende Dienste anzeigen", 
+        "Alle nicht laufenden Dienste anzeigen", 
+        "Dienst starten", 
+        "Dienst stoppen", 
+        "Dienst neustarten", 
+        "Neuen Nutzer anlegen", 
+        "Nutzer anzeigen",
+        "Nutzer löschen", 
+        "Nutzer aus Datein anlegen", 
+        "Nutzer aus Datei löschen",
+        "Netzwerktest", 
+        "Exit"
+        )
 
 # Create a variable to track whether the menu should continue to run
 $continue = $true
@@ -8,8 +22,12 @@ $continue = $true
 while ($continue) {
     # Display the menu options
     Write-Host ""
+
+    $index = 1
+
     for ($i = 0; $i -lt $options.Length; $i++) {
-        Write-Host "$($i + 1).  `t$($options[$i])"
+        Write-Host "$("[" + $index + "]"):  `t$($options[$i])"
+        $index++
     }
 
     # Ask the user to choose an option
@@ -111,17 +129,67 @@ while ($continue) {
             
         }
 
-    # Option 8:  Nutzer löschen    
-        {$_ -eq "8"} {Write-Host "You chose $($options[7])"}
+    # Option 8: Nutzer anzeigen
+        {$_ -eq "8"} {Write-Host "You chose $($options[7])"
+        
+            Write-Host Get-LocalUser -Name * 
+        }
 
-    # Option 9: Nutzer aus Datei anlegen    
-        {$_ -eq "9"} {Write-Host "You chose $($options[8])"}
+    # Option 9:  Nutzer löschen    
+        {$_ -eq "9"} {Write-Host "You chose $($options[8])"
+   
+         $benutzer = Read-Host "Welchen Benutzer wollen Sie löschen? (Vollen Namen eingeben) " 
+         
+         Remove-LocalUser -Name $benutzer
+        
+        }
 
-    # Option 10: Nutzer aus Datei löschen  
+    # Option 10: Nutzer aus Datei anlegen    
         {$_ -eq "10"} {Write-Host "You chose $($options[9])"}
 
-    # Option 11: Exit
-        {$_ -eq "11"} {Write-Host "Exiting..."; $continue = $false}
+    # Option 11: Nutzer aus Datei löschen  
+        {$_ -eq "11"} {Write-Host "You chose $($options[10])"}
+    
+    # Option 12: Netzwerktest
+        {$_ -eq "12"} {Write-Host "You chose $($options[11])"
+            $auswahl = Read-Host "Normal Ping or Traceroute ping 0/1"
+            if($auswahl -eq "0"){
+                Write-Host "You chose Normal Ping"          
+                $adresse = Read-Host "Which Adress or Website do you want to ping ?" 
+                $count = Read-Host "Define how often you'd like to ping the adress ? "  
+                if($count -gt 0){
+                    try{
+                        #Test-Connection wirft keine exception, deswegen benutzen wir das "-Quiet" Keyword, welches uns einen Booleanwert, ob die Verbindung erfolgreich war zurückgibt
+                        $result = Test-Connection -Count $count -Quiet $adresse
+                        if(!$result){
+                            Write-Host "Error: Unable to establish connection"
+                        }else{
+                            Test-Connection -Count $count $adresse
+                        }
+                    }catch{
+                        Write-Host "Error: $($_.Exception.Message)"
+                    }
+                }else{   
+                    Write-Host "Invalid Input...Input must be greater than 0"
+                    Start-Sleep -Seconds 2
+                }
+            }elseif ($auswahl -eq "1"){
+                Write-Host "You chose TraceRoute-Test"
+                $adresse = Read-Host "Which Adress or Website do you want to ping ?"
+                $result = Test-Netconnection $adresse -TraceRoute -InformationLevel "Detailed" 2>$null
+                    if(!$result.PingReply.Status -eq "Success"){
+                        Write-Host "Error: Unable to establish connection"
+                    }else{
+                        Test-Netconnection $adresse -TraceRoute 2>$null
+                    }
+            }else{
+                Write-Host "Invalid input only values 0 and 1 are accepted"
+                Start-Sleep -Seconds 2
+            }    
+        }
+    
+    # Option 13: Exit
+        {$_ -eq "13"} {Write-Host "Exiting..."; $continue = $false}
         default {Write-Host "Invalid choice. Please try again."}
     }
 }
