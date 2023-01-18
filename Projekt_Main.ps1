@@ -116,28 +116,30 @@ while ($continue) {
                 New-LocalUser -Name $username -Password (ConvertTo-SecureString $password -AsPlainText -Force) -FullName $fullName -Description $description
                 Add-LocalGroupMember -Group "Benutzer" -Member $username
 
-                # Datenbank für User anlegen
+                # Datenbank fuer User anlegen
                 & 'C:\xampp\mysql\bin\mysql.exe' -u root -p -e "CREATE DATABASE $username; GRANT ALL PRIVILEGES ON $username.* TO '$username'@'localhost' IDENTIFIED BY '$password';"
             
-                # Apache Webspace für User anlegen
+                # Apache Webspace fuer User anlegen
 
             } else {
                 Write-Host "User $username already exists"
             }
         }
 
-    # Option 9:  Nutzer löschen
+    # Option 9:  Nutzer loeschen
         {$_ -eq "9"} {Write-Host "You chose $($options[8])"
             $username = Read-Host "Please enter username"
             $user = Get-LocalUser -Name $username -ErrorAction SilentlyContinue
             if($user -ne $null) {
                 
-                # Windows User löschen
+                # Windows User loeschen
                 Remove-LocalUser -Name $username -Confirm:$false
 
-                # MySQL User & Datenbank löschen
+                # MySQL User & Datenbank loeschen
+                Invoke-Sqlcmd -ServerInstance "Localost" -Database $username + "@localhost" -Query "DROP USER [Username]"
 
-                # Apache Webspace löschen
+                # Apache Webspace loeschen
+
 
             } else {
                 Write-Host "User $username does not exist"
@@ -155,7 +157,7 @@ while ($continue) {
             $adresse = Read-Host "Please enter destination adress" 
             $count = Read-Host "Define how often you'd like to ping the adress ? "
             if($count -gt 0){
-                #Test-Connection wirft keine exception, deswegen benutzen wir das "-Quiet" Keyword, welches uns einen Booleanwert, ob die Verbindung erfolgreich war zurückgibt
+                #Test-Connection wirft keine exception, deswegen benutzen wir das "-Quiet" Keyword, welches uns einen Booleanwert, ob die Verbindung erfolgreich war zurueckgibt
                 $result = Test-Connection -Count $count -Quiet $adresse
                 if(!$result){
                     Write-Host "Error: Unable to establish connection"
