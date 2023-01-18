@@ -1,5 +1,5 @@
 # Create an array of menu options
-$options = @("Alle Dienste anzeigen", "Alle laufende Dienste anzeigen", "Alle nicht laufenden Dienste anzeigen", "Dienst starten", "Dienst stoppen", "Dienst neustarten", "Alle Nutzer anzeigen", "Neuen Nutzer anlegen", "Nutzer löschen NO CONFIRMATION!!!", "Nutzer aus Datein anlegen", "Nutzer aus Datei löschen NO CONFIRMATION!!!", "Pingtest", "Traceroute", "Exit")
+$options = @("Alle Dienste anzeigen", "Alle laufende Dienste anzeigen", "Alle nicht laufenden Dienste anzeigen", "Dienst starten", "Dienst stoppen", "Dienst neustarten", "Alle Nutzer anzeigen", "Neuen Nutzer anlegen", "Nutzer loeschen NO CONFIRMATION!!!", "Nutzer aus Datein anlegen", "Nutzer aus Datei loeschen NO CONFIRMATION!!!", "Pingtest", "Traceroute", "Exit")
 
 # Create a variable to track whether the menu should continue to run
 $continue = $true
