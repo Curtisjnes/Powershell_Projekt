@@ -1,34 +1,18 @@
 # Create an array of menu options
-$options = @(
-        "Alle Dienste anzeigen", 
-        "Alle laufende Dienste anzeigen", 
-        "Alle nicht laufenden Dienste anzeigen", 
-        "Dienst starten", 
-        "Dienst stoppen", 
-        "Dienst neustarten", 
-        "Neuen Nutzer anlegen", 
-        "Nutzer anzeigen",
-        "Nutzer löschen", 
-        "Nutzer aus Datein anlegen", 
-        "Nutzer aus Datei löschen",
-        "Netzwerktest", 
-        "Exit"
-        )
+$options = @("Alle Dienste anzeigen", "Alle laufende Dienste anzeigen", "Alle nicht laufenden Dienste anzeigen", "Dienst starten", "Dienst stoppen", "Dienst neustarten", "Alle Nutzer anzeigen", "Neuen Nutzer anlegen", "Nutzer löschen NO CONFIRMATION!!!", "Nutzer aus Datein anlegen", "Nutzer aus Datei löschen NO CONFIRMATION!!!", "Pingtest", "Traceroute", "Exit")
 
 # Create a variable to track whether the menu should continue to run
 $continue = $true
 
 # Use a while loop to keep displaying the menu until the user chooses to exit
 while ($continue) {
+
     # Display the menu options
     Write-Host ""
-
-    $index = 1
-
     for ($i = 0; $i -lt $options.Length; $i++) {
-        Write-Host "$("[" + $index + "]"):  `t$($options[$i])"
-        $index++
+        Write-Host "[$($i + 1)] `t$($options[$i])"
     }
+    Write-Host ""
 
     # Ask the user to choose an option
     $choice = Read-Host "Choose an option (1-$($options.Length))"
@@ -115,85 +99,87 @@ while ($continue) {
                 Write-Host "Error: $($_.Exception.Message)"
             }
         }
+        
+    # Option 7: Alle Nutzer anzeigen
+        {$_ -eq "7"} {Write-Host "You chose $($options[6])"; Get-LocalUser}
 
-    # Option 7: Neuen Nutzer anlegen    
-        {$_ -eq "7"} {Write-Host "You chose $($options[6])"
-            $username = Read-Host "Please enter username"
-            $password = Read-Host "Please enter password"
-            $fullName = Read-Host "Please enter full name"
-            $description = Read-Host "Please enter description"
-            New-LocalUser -Name $username -Password (ConvertTo-SecureString $password -AsPlainText -Force) -FullName $fullName -Description $description
-            Add-LocalGroupMember -Group "Benutzer" -Member $username
-
-            & 'C:\xampp\mysql\bin\mysql.exe' -u root -p -e "CREATE DATABASE $username; GRANT ALL PRIVILEGES ON $username.* TO '$username'@'localhost' IDENTIFIED BY '$password';"
-            
-        }
-
-    # Option 8: Nutzer anzeigen
+    # Option 8: Neuen Nutzer anlegen    
         {$_ -eq "8"} {Write-Host "You chose $($options[7])"
-        
-            Write-Host Get-LocalUser -Name * 
+            $username = Read-Host "Please enter username"
+            $user = Get-LocalUser -Name $username -ErrorAction SilentlyContinue
+            if ($user -eq $null) {
+                
+                # Windows User anlegen
+                $password = Read-Host "Please enter password"
+                $fullName = Read-Host "Please enter full name"
+                $description = Read-Host "Please enter description"
+                New-LocalUser -Name $username -Password (ConvertTo-SecureString $password -AsPlainText -Force) -FullName $fullName -Description $description
+                Add-LocalGroupMember -Group "Benutzer" -Member $username
+
+                # Datenbank für User anlegen
+                & 'C:\xampp\mysql\bin\mysql.exe' -u root -p -e "CREATE DATABASE $username; GRANT ALL PRIVILEGES ON $username.* TO '$username'@'localhost' IDENTIFIED BY '$password';"
+            
+                # Apache Webspace für User anlegen
+
+            } else {
+                Write-Host "User $username already exists"
+            }
         }
 
-    # Option 9:  Nutzer löschen    
+    # Option 9:  Nutzer löschen
         {$_ -eq "9"} {Write-Host "You chose $($options[8])"
-   
-         $benutzer = Read-Host "Welchen Benutzer wollen Sie löschen? (Vollen Namen eingeben) " 
-         
-         Remove-LocalUser -Name $benutzer
-        
+            $username = Read-Host "Please enter username"
+            $user = Get-LocalUser -Name $username -ErrorAction SilentlyContinue
+            if($user -ne $null) {
+                
+                # Windows User löschen
+                Remove-LocalUser -Name $username -Confirm:$false
+
+                # MySQL User & Datenbank löschen
+
+                # Apache Webspace löschen
+
+            } else {
+                Write-Host "User $username does not exist"
+            }
         }
 
-    # Option 10: Nutzer aus Datei anlegen    
+    # Option 10: Nutzer aus Datei anlegen
         {$_ -eq "10"} {Write-Host "You chose $($options[9])"}
 
-    # Option 11: Nutzer aus Datei löschen  
+    # Option 11: Nutzer aus Datei löschen
         {$_ -eq "11"} {Write-Host "You chose $($options[10])"}
-    
-    # Option 12: Netzwerktest
+
+    # Option 12: Ping Test
         {$_ -eq "12"} {Write-Host "You chose $($options[11])"
-            $auswahl = Read-Host "Normal Ping or Traceroute ping 0/1"
-            if($auswahl -eq "0"){
-                Write-Host "You chose Normal Ping"          
-                $adresse = Read-Host "Which Adress or Website do you want to ping ?" 
-                $count = Read-Host "Define how often you'd like to ping the adress ? "  
-                if($count -gt 0){
-                    try{
-                        #Test-Connection wirft keine exception, deswegen benutzen wir das "-Quiet" Keyword, welches uns einen Booleanwert, ob die Verbindung erfolgreich war zurückgibt
-                        $result = Test-Connection -Count $count -Quiet $adresse
-                        if(!$result){
-                            Write-Host "Error: Unable to establish connection"
-                            Start-Sleep -Seconds 2
-                        }else{
-                            Test-Connection -Count $count $adresse
-                            Start-Sleep -Seconds 3
-                        }
-                    }catch{
-                        Write-Host "Error: $($_.Exception.Message)"
-                    }
-                }else{   
-                    Write-Host "Invalid Input...Input must be greater than 0"
-                    Start-Sleep -Seconds 2
-                }
-            }elseif ($auswahl -eq "1"){
-                Write-Host "You chose TraceRoute-Test"
-                $adresse = Read-Host "Which Adress or Website do you want to ping ?"
-                $result = Test-Connection -Quiet $adresse
+            $adresse = Read-Host "Please enter destination adress" 
+            $count = Read-Host "Define how often you'd like to ping the adress ? "
+            if($count -gt 0){
+                #Test-Connection wirft keine exception, deswegen benutzen wir das "-Quiet" Keyword, welches uns einen Booleanwert, ob die Verbindung erfolgreich war zurückgibt
+                $result = Test-Connection -Count $count -Quiet $adresse
                 if(!$result){
                     Write-Host "Error: Unable to establish connection"
-                    Start-Sleep -Seconds 2
                 }else{
-                    Test-Netconnection $adresse -TraceRoute
-                    Start-Sleep -Seconds 3
+                    Test-Connection -Count $count $adresse
                 }
             }else{
-                Write-Host "Invalid input only values 0 and 1 are accepted"
-                Start-Sleep -Seconds 2
-            }    
+                Write-Host "Invalid Input...Input must be greater than 0"
+            }
         }
-    
-    # Option 13: Exit
-        {$_ -eq "13"} {Write-Host "Exiting..."; $continue = $false}
+
+    # Option 13: Trace Route Test
+        {$_ -eq "13"} {Write-Host "You chose $($options[12])"
+            $adresse = Read-Host "Please enter destination adress"
+            $result = Test-Connection -Quiet $adresse
+            if(!$result){
+                Write-Host "Error: Unable to establish connection"
+            }else{
+                Test-Netconnection $adresse -TraceRoute
+            }
+        }
+
+    # Option 14: Exit
+        {$_ -eq "14"} {Write-Host "Exiting..."; $continue = $false}
         default {Write-Host "Invalid choice. Please try again."}
     }
 }
