@@ -1,4 +1,4 @@
-# Create an array of menu options
+# Array mit Menue Optionen
 $options = 
     @(
     "Alle Dienste anzeigen", 
@@ -16,23 +16,23 @@ $options =
     "Traceroute",
     "Exit")
 
-# Create a variable to track whether the menu should continue to run
+# Variable, die die Do-While schleife unterbricht
 $continue = $true
 
-# Use a while loop to keep displaying the menu until the user chooses to exit
+# While loop, welcher ausgegeben wird bis ihn jemand mithilfe einer Menue-Option beendet
 while ($continue) {
 
-    # Display the menu options
+    # Ausgabe der Menue-Optionen
     Write-Host ""
     for ($i = 0; $i -lt $options.Length; $i++) {
         Write-Host "[$($i + 1)] `t$($options[$i])"
     }
     Write-Host ""
 
-    # Ask the user to choose an option
+    # Eingabeaufforderung an den User
     $choice = Read-Host "Choose an option (1-$($options.Length))"
 
-    # Use a switch statement to determine what to do based on the user's choice
+    # Switch Statement, welche dann den zu der Menue-Option gehörigen Code ausfuehrt
     switch ($choice) {
     
     # Option 1: Alle Dienste anzeigen    
