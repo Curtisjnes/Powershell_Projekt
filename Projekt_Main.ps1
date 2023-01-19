@@ -1,5 +1,20 @@
 # Create an array of menu options
-$options = @("Alle Dienste anzeigen", "Alle laufende Dienste anzeigen", "Alle nicht laufenden Dienste anzeigen", "Dienst starten", "Dienst stoppen", "Dienst neustarten", "Alle Nutzer anzeigen", "Neuen Nutzer anlegen", "Nutzer loeschen NO CONFIRMATION!!!", "Nutzer aus Datein anlegen", "Nutzer aus Datei loeschen NO CONFIRMATION!!!", "Pingtest", "Traceroute", "Exit")
+$options = 
+    @(
+    "Alle Dienste anzeigen", 
+    "Alle laufende Dienste anzeigen",
+    "Alle nicht laufenden Dienste anzeigen",
+    "Dienst starten",
+    "Dienst stoppen",
+    "Dienst neustarten",
+    "Alle Nutzer anzeigen",
+    "Neuen Nutzer anlegen",
+    "Nutzer loeschen NO CONFIRMATION!!!",
+    "Nutzer aus Datein anlegen",
+    "Nutzer aus Datei loeschen NO CONFIRMATION!!!",
+    "Pingtest",
+    "Traceroute",
+    "Exit")
 
 # Create a variable to track whether the menu should continue to run
 $continue = $true
@@ -149,8 +164,40 @@ while ($continue) {
     # Option 10: Nutzer aus Datei anlegen
         {$_ -eq "10"} {Write-Host "You chose $($options[9])"}
 
-    # Option 11: Nutzer aus Datei lÃ¶schen
-        {$_ -eq "11"} {Write-Host "You chose $($options[10])"}
+    # Option 11: Nutzer aus Datei loeschen
+        {$_ -eq "11"} {Write-Host "You chose $($options[10])"
+            
+            #Dateipfad der Liste abfragen
+            $path = Read-Host "Please enter the path of your csv doc "
+            
+            #CSV-Datei wird eingelesen und in einer Variable gespeichert
+            $ausgabe= Import-CSV -Path $path -Delimiter ";" 
+            
+            #Namen der Spalten werden in einer Variable gespeichert
+            $spaltennamen = $ausgabe | gm -MemberType NoteProperty | select -Expand Name
+                
+                #fuer jede spalte wird überbprüft, ob es die spalte "Username" ist
+                foreach($spaltennamen in $spaltennamen) {
+                    if ($spaltennamen -eq "Username") {
+                        $spalte = $ausgabe | select -ExpandProperty $spaltenname
+                        $usernames = $spalte -split " "
+                        Write-Host "Spaltenname: $spaltenname"
+                        #Jeder Spalteneintrag wird in einer Variable gespeichert, und überprüft,
+                        #ob der Nutzername einem Nutzer auf dem Rechner entspricht
+                        foreach ($username in $usernames) {
+                        $user = Get-LocalUser -Name $username -ErrorAction SilentlyContinue
+                            if($user -ne $null) {
+                                #Ist der User vorhanden wird dieser gelöscht
+                                Remove-LocalUser -Name $username -Confirm:$false
+                                Write-Host "User has been deleted"
+                            }else{
+                                #Ist der User nicht vorhanden wird ein Fehler zurückgegeben
+                                Write-Host "Error: The User [$username] does not Exist"
+                            }
+                        }
+                    }
+                }
+            }
 
     # Option 12: Ping Test
         {$_ -eq "12"} {Write-Host "You chose $($options[11])"
