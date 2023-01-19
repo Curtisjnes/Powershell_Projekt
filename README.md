@@ -16,14 +16,14 @@ Erstellen Sie ein Skript mit folgender Funktionalität:
     
     ->einen User anlegen (lokal) nach Eingabe der Userdaten (Tastatur)
       -->bekommt automatisch Passwort (Done)
-      -->bekommt automatisch einen Datenbank auf MySQL (In Progress)
+      -->bekommt automatisch einen Datenbank auf MySQL (Done)
       -->bekommt automatisch einen Webspace auf XAMPP (Apache, mit Begrüßungs-HTML-Seite nach Vorgabe) (In Progress)
       
-    ->mehrere User anlegen (lokal) nach Liste einer Datei (In Progress)
+    ->mehrere User anlegen (lokal) nach Liste einer Datei (Done / In Progress) Apache fehlt
     
-    ->einen User löschen (mit dem Löschen aller Dateien) (Done/In Progress)
+    ->einen User löschen (mit dem Löschen aller Dateien) (Done/In Progress) Apache fehlt
     
-    ->mehrere User löschen (mit dem Löschen aller Dateien) (In Progress)
+    ->mehrere User löschen (mit dem Löschen aller Dateien) (Done / In Progress) Apache Fehlt
     
     ->Netzwerktest (Ping-Test, Traceroute-Test) (Done)
     
