@@ -162,7 +162,24 @@ while ($continue) {
         }
 
     # Option 10: Nutzer aus Datei anlegen
-        {$_ -eq "10"} {Write-Host "You chose $($options[9])"}
+        {$_ -eq "10"} {Write-Host "You chose $($options[9])"
+           $path = Read-Host "Please enter the path of your csv doc"
+           
+           $csv = Import-Csv -Path $path -Delimiter ";"
+           
+          foreach ($line in $csv) {
+            $username = $line.Username
+            $fullname = $line.Name
+            $password = $line.Passwort
+            $description = $line.Beschreibung
+           
+            Write-Host New-LocalUser -Name $username -Password $password -FullName $fullName -Description $description
+            Write-Host Add-LocalGroupMember -Group "Benutzer" -Member $username           
+            
+          }
+        
+        
+        }
 
     # Option 11: Nutzer aus Datei loeschen
         {$_ -eq "11"} {Write-Host "You chose $($options[10])"
@@ -178,20 +195,32 @@ while ($continue) {
                 
                 #fuer jede spalte wird überbprüft, ob es die spalte "Username" ist
                 foreach($spaltennamen in $spaltennamen) {
+                    
                     if ($spaltennamen -eq "Username") {
+                        
                         $spalte = $ausgabe | select -ExpandProperty $spaltenname
+                        
                         $usernames = $spalte -split " "
+                        
                         Write-Host "Spaltenname: $spaltenname"
+                        
                         #Jeder Spalteneintrag wird in einer Variable gespeichert, und überprüft,
                         #ob der Nutzername einem Nutzer auf dem Rechner entspricht
                         foreach ($username in $usernames) {
+                        
                         $user = Get-LocalUser -Name $username -ErrorAction SilentlyContinue
                             if($user -ne $null) {
-                                #Ist der User vorhanden wird dieser gelöscht
+                                
+                                #Ist der User vorhanden wird dieser lokal geloescht
                                 Remove-LocalUser -Name $username -Confirm:$false
+
+                                #Datenbank und MySql Nutzer werden geloescht
+                                Invoke-Sqlcmd -ServerInstance "Localost" -Database $username + "@localhost" -Query "DROP USER [Username]"
+
                                 Write-Host "User has been deleted"
                             }else{
-                                #Ist der User nicht vorhanden wird ein Fehler zurückgegeben
+                                
+                                #Ist der User nicht vorhanden wird ein Fehler zurueckgegeben
                                 Write-Host "Error: The User [$username] does not Exist"
                             }
                         }
