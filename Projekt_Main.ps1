@@ -167,16 +167,23 @@ while ($continue) {
            
            $csv = Import-Csv -Path $path -Delimiter ";"
            
-          foreach ($line in $csv) {
+           $users = @()
+           foreach ($line in $csv) {
             $username = $line.Username
-            $fullname = $line.Name
+            $name = $line.Name
             $password = $line.Passwort
             $description = $line.Beschreibung
+            $users += New-Object PSObject -Property @{
+                'Username' = $username
+                'Name' = $name
+                'Password' = $password
+                'Description' = $description
+                }
+
+                Write-Host New-LocalUser -Name $users.Username -Password $users.Password -FullName $users.Name -Description $users.Description
+            }
+
            
-            Write-Host New-LocalUser -Name $username -Password $password -FullName $fullName -Description $description
-            Write-Host Add-LocalGroupMember -Group "Benutzer" -Member $username           
-            
-          }
         
         
         }
@@ -217,7 +224,10 @@ while ($continue) {
                                 #Datenbank und MySql Nutzer werden geloescht
                                 Invoke-Sqlcmd -ServerInstance "Localost" -Database $username + "@localhost" -Query "DROP USER [Username]"
 
+                                #Apache Webspace wird beseitigt
+
                                 Write-Host "User has been deleted"
+       
                             }else{
                                 
                                 #Ist der User nicht vorhanden wird ein Fehler zurueckgegeben
