@@ -163,16 +163,31 @@ while ($continue) {
 
     # Option 10: Nutzer aus Datei anlegen
         {$_ -eq "10"} {Write-Host "You chose $($options[9])"
+           #Abfrage nach Dateipfad
            $path = Read-Host "Please enter the path of your csv doc"
            
+           #Datei wird in einer Variable gespeichert
            $csv = Import-Csv -Path $path -Delimiter ";"
            
+           #es wird ein Array Instanziiert, welcher später alle User-Daten speichern soll
            $users = @()
+
+           #Jede Zeile der CSV-Datei wird eingelesen und in unterschiedlichen Parametern gespeichert, je nachdem in welche Spalte die Informationen stehen
            foreach ($line in $csv) {
+            
+            #Alles was in der Spalte Username steht wird in der username Variable gespeichert
             $username = $line.Username
+            
+            #Alles was in der Spalte Name steht wird in der name Variable gespeichert
             $name = $line.Name
+
+            #Alles was in der Passwort spalte steht wird in der password Variable gespeichtert
             $password = $line.Passwort
+
+            #Alles was in der Beschreibung steht wird in der description Variable gespeichert
             $description = $line.Beschreibung
+
+            #Die Variablen werden dem Array zugewiesen
             $users += New-Object PSObject -Property @{
                 'Username' = $username
                 'Name' = $name
@@ -180,7 +195,11 @@ while ($continue) {
                 'Description' = $description
                 }
 
+                #Der Nutzer wird lokal angelegt, einer Nutzergruppe hinzugefügt und es wird im eine Datenbank zugewiesen
                 Write-Host New-LocalUser -Name $users.Username -Password $users.Password -FullName $users.Name -Description $users.Description
+                Write-Host Add-LocalGroupMember -Group "Benutzer" -Member $users.Username
+                Write-Host 'C:\xampp\mysql\bin\mysql.exe' -u root -p -e "CREATE DATABASE $users.Username; GRANT ALL PRIVILEGES ON $users.Username .* TO '$users.Username'@'localhost' IDENTIFIED BY '$users.Password';"
+
             }
 
            
@@ -240,14 +259,21 @@ while ($continue) {
 
     # Option 12: Ping Test
         {$_ -eq "12"} {Write-Host "You chose $($options[11])"
+            
+            #Es wird abgefragt welche Adresse gepingt werden soll
             $adresse = Read-Host "Please enter destination adress" 
+
+            #Da man bei einem normalen Ping auch angeben kann wie oft eine Adresse gepingt werden soll, kann sich der User heir frei entscheiden, ist die Eingabe aber ungültig, wird ein Fehler ausgespuckt
             $count = Read-Host "Define how often you'd like to ping the adress ? "
+            
+            #Abfrage, ob die eingabe Valide ist
             if($count -gt 0){
                 #Test-Connection wirft keine exception, deswegen benutzen wir das "-Quiet" Keyword, welches uns einen Booleanwert, ob die Verbindung erfolgreich war zurueckgibt
                 $result = Test-Connection -Count $count -Quiet $adresse
                 if(!$result){
                     Write-Host "Error: Unable to establish connection"
                 }else{
+                    #Ausgabe des Ping-Ergebnisses
                     Test-Connection -Count $count $adresse
                 }
             }else{
@@ -257,8 +283,14 @@ while ($continue) {
 
     # Option 13: Trace Route Test
         {$_ -eq "13"} {Write-Host "You chose $($options[12])"
+
+            #Es wird abgefragt welche Adresse gepingt werden soll
             $adresse = Read-Host "Please enter destination adress"
+
+            #Es wird ein Normaler Ping an die Adresse geschickt, wenn die Adresse erreichbar ist gibt der ping true zurück. Das Ergebnis des pings wird in einer Variable gespeichert
             $result = Test-Connection -Quiet $adresse
+            
+            #Wenn der Ping erfolgreich war wird der Traceroute-Ping gestartet, Ansonsten wird ein Fehler ausgegeben
             if(!$result){
                 Write-Host "Error: Unable to establish connection"
             }else{
