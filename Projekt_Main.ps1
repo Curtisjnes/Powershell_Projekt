@@ -32,7 +32,7 @@ while ($continue) {
     # Eingabeaufforderung an den User
     $choice = Read-Host "Choose an option (1-$($options.Length))"
 
-    # Switch Statement, welche dann den zu der Menue-Option gehörigen Code ausfuehrt
+    # Switch Statement, welche dann den zu der Menue-Option gehÃ¶rigen Code ausfuehrt
     switch ($choice) {
     
     # Option 1: Alle Dienste anzeigen    
@@ -135,6 +135,31 @@ while ($continue) {
                 & 'C:\xampp\mysql\bin\mysql.exe' -u root -p -e "CREATE DATABASE $username; GRANT ALL PRIVILEGES ON $username.* TO '$username'@'localhost' IDENTIFIED BY '$password';"
             
                 # Apache Webspace fuer User anlegen
+                # Ordner fÃ¼r Webspace anlegen
+                New-Item -ItemType Directory -Path "C:\xampp\htdocs\$username"
+                $Acl = Get-Acl "C:\xampp\htdocs\$username"
+                $Ar = New-Object System.Security.AccessControl.FileSystemAccessRule("$username","Modify","Allow")
+                $Acl.SetAccessRule($Ar)
+                Set-Acl "C:\xampp\htdocs\$username" $Acl
+
+                # Apache config und Win config schreiben
+                Add-Content -Path "C:\xampp\apache\conf\extra\httpd-vhosts.conf" -Value "<VirtualHost *:80>
+    ServerName $username.localhost
+    DocumentRoot ""C:\xampp\htdocs\$username""
+    <Directory ""C:\xampp\htdocs\$username"">
+        Options Indexes FollowSymLinks Includes ExecCGI
+        AllowOverride All
+        Require all granted
+    </Directory>
+</VirtualHost>"
+                # Add-Content -Path "C:\Windows\System32\drivers\etc\hosts" -Value "127.0.0.1 $username.localhost"
+
+                # Indexfile erstellen
+
+
+                # Apache neustarten
+                net stop Apache2.4
+                net start Apache2.4
 
             } else {
                 Write-Host "User $username already exists"
@@ -151,10 +176,22 @@ while ($continue) {
                 Remove-LocalUser -Name $username -Confirm:$false
 
                 # MySQL User & Datenbank loeschen
-                Invoke-Sqlcmd -ServerInstance "Localost" -Database $username + "@localhost" -Query "DROP USER [Username]"
+                & 'C:\xampp\mysql\bin\mysql.exe' -u root -p -e "DROP USER '$username'@'localhost'; DROP DATABASE $username;"
 
                 # Apache Webspace loeschen
+                # Ordner lÃ¶schen
+                Remove-Item -Path "C:\xampp\htdocs\$username" -Force -Recurse
+                
+#ToDo           # Apache config und Win config lÃ¶schen
+                $file = 'C:\xampp\apache\conf\extra\httpd-vhosts.conf'
+                $search = '<VirtualHost \*:80>\n    ServerName test.localhost(\n.*)*<\/VirtualHost>'
+                $content = Get-Content $file
+                $content = $content -replace $search,''
+                $content | Out-File $file
 
+                # Apache neustarten
+                net stop Apache2.4
+                net start Apache2.4
 
             } else {
                 Write-Host "User $username does not exist"
@@ -169,7 +206,7 @@ while ($continue) {
            #Datei wird in einer Variable gespeichert
            $csv = Import-Csv -Path $path -Delimiter ";"
            
-           #es wird ein Array Instanziiert, welcher später alle User-Daten speichern soll
+           #es wird ein Array Instanziiert, welcher spÃ¤ter alle User-Daten speichern soll
            $users = @()
 
            #Jede Zeile der CSV-Datei wird eingelesen und in unterschiedlichen Parametern gespeichert, je nachdem in welche Spalte die Informationen stehen
@@ -195,7 +232,7 @@ while ($continue) {
                 'Description' = $description
                 }
 
-                #Der Nutzer wird lokal angelegt, einer Nutzergruppe hinzugefügt und es wird im eine Datenbank zugewiesen
+                #Der Nutzer wird lokal angelegt, einer Nutzergruppe hinzugefÃ¼gt und es wird ihm eine Datenbank zugewiesen
                 Write-Host New-LocalUser -Name $users.Username -Password $users.Password -FullName $users.Name -Description $users.Description
                 Write-Host Add-LocalGroupMember -Group "Benutzer" -Member $users.Username
                 Write-Host 'C:\xampp\mysql\bin\mysql.exe' -u root -p -e "CREATE DATABASE $users.Username; GRANT ALL PRIVILEGES ON $users.Username .* TO '$users.Username'@'localhost' IDENTIFIED BY '$users.Password';"
@@ -219,7 +256,7 @@ while ($continue) {
             #Namen der Spalten werden in einer Variable gespeichert
             $spaltennamen = $ausgabe | gm -MemberType NoteProperty | select -Expand Name
                 
-                #fuer jede spalte wird überbprüft, ob es die spalte "Username" ist
+                #fuer jede spalte wird Ã¼berbprÃ¼ft, ob es die spalte "Username" ist
                 foreach($spaltennamen in $spaltennamen) {
                     
                     if ($spaltennamen -eq "Username") {
@@ -230,7 +267,7 @@ while ($continue) {
                         
                         Write-Host "Spaltenname: $spaltenname"
                         
-                        #Jeder Spalteneintrag wird in einer Variable gespeichert, und überprüft,
+                        #Jeder Spalteneintrag wird in einer Variable gespeichert, und Ã¼berprÃ¼ft,
                         #ob der Nutzername einem Nutzer auf dem Rechner entspricht
                         foreach ($username in $usernames) {
                         
@@ -244,8 +281,6 @@ while ($continue) {
                                 Invoke-Sqlcmd -ServerInstance "Localost" -Database $username + "@localhost" -Query "DROP USER [Username]"
 
                                 #Apache Webspace wird beseitigt
-
-                                Write-Host "User has been deleted"
        
                             }else{
                                 
@@ -263,7 +298,7 @@ while ($continue) {
             #Es wird abgefragt welche Adresse gepingt werden soll
             $adresse = Read-Host "Please enter destination adress" 
 
-            #Da man bei einem normalen Ping auch angeben kann wie oft eine Adresse gepingt werden soll, kann sich der User heir frei entscheiden, ist die Eingabe aber ungültig, wird ein Fehler ausgespuckt
+            #Da man bei einem normalen Ping auch angeben kann wie oft eine Adresse gepingt werden soll, kann sich der User heir frei entscheiden, ist die Eingabe aber ungÃ¼ltig, wird ein Fehler ausgespuckt
             $count = Read-Host "Define how often you'd like to ping the adress ? "
             
             #Abfrage, ob die eingabe Valide ist
@@ -287,7 +322,7 @@ while ($continue) {
             #Es wird abgefragt welche Adresse gepingt werden soll
             $adresse = Read-Host "Please enter destination adress"
 
-            #Es wird ein Normaler Ping an die Adresse geschickt, wenn die Adresse erreichbar ist gibt der ping true zurück. Das Ergebnis des pings wird in einer Variable gespeichert
+            #Es wird ein Normaler Ping an die Adresse geschickt, wenn die Adresse erreichbar ist gibt der ping true zurÃ¼ck. Das Ergebnis des pings wird in einer Variable gespeichert
             $result = Test-Connection -Quiet $adresse
             
             #Wenn der Ping erfolgreich war wird der Traceroute-Ping gestartet, Ansonsten wird ein Fehler ausgegeben
@@ -300,6 +335,8 @@ while ($continue) {
 
     # Option 14: Exit
         {$_ -eq "14"} {Write-Host "Exiting..."; $continue = $false}
+        
+    # Default
         default {Write-Host "Invalid choice. Please try again."}
     }
 }
