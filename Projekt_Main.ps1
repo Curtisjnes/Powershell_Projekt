@@ -135,6 +135,31 @@ while ($continue) {
                 & 'C:\xampp\mysql\bin\mysql.exe' -u root -p -e "CREATE DATABASE $username; GRANT ALL PRIVILEGES ON $username.* TO '$username'@'localhost' IDENTIFIED BY '$password';"
             
                 # Apache Webspace fuer User anlegen
+                # Ordner für Webspace anlegen
+                New-Item -ItemType Directory -Path "C:\xampp\htdocs\$username"
+                $Acl = Get-Acl "C:\xampp\htdocs\$username"
+                $Ar = New-Object System.Security.AccessControl.FileSystemAccessRule("$username","Modify","Allow")
+                $Acl.SetAccessRule($Ar)
+                Set-Acl "C:\xampp\htdocs\$username" $Acl
+
+                # Apache config und Win config schreiben
+                Add-Content -Path "C:\xampp\apache\conf\extra\httpd-vhosts.conf" -Value "<VirtualHost *:80>
+    ServerName $username.localhost
+    DocumentRoot ""C:\xampp\htdocs\$username""
+    <Directory ""C:\xampp\htdocs\$username"">
+        Options Indexes FollowSymLinks Includes ExecCGI
+        AllowOverride All
+        Require all granted
+    </Directory>
+</VirtualHost>"
+                # Add-Content -Path "C:\Windows\System32\drivers\etc\hosts" -Value "127.0.0.1 $username.localhost"
+
+                # Indexfile erstellen
+
+
+                # Apache neustarten
+                net stop Apache2.4
+                net start Apache2.4
 
             } else {
                 Write-Host "User $username already exists"
@@ -151,10 +176,22 @@ while ($continue) {
                 Remove-LocalUser -Name $username -Confirm:$false
 
                 # MySQL User & Datenbank loeschen
-                Invoke-Sqlcmd -ServerInstance "Localost" -Database $username + "@localhost" -Query "DROP USER [Username]"
+                & 'C:\xampp\mysql\bin\mysql.exe' -u root -p -e "DROP USER '$username'@'localhost'; DROP DATABASE $username;"
 
                 # Apache Webspace loeschen
+                # Ordner löschen
+                Remove-Item -Path "C:\xampp\htdocs\$username" -Force -Recurse
+                
+#ToDo           # Apache config und Win config löschen
+                $file = 'C:\xampp\apache\conf\extra\httpd-vhosts.conf'
+                $search = '<VirtualHost \*:80>\n    ServerName test.localhost(\n.*)*<\/VirtualHost>'
+                $content = Get-Content $file
+                $content = $content -replace $search,''
+                $content | Out-File $file
 
+                # Apache neustarten
+                net stop Apache2.4
+                net start Apache2.4
 
             } else {
                 Write-Host "User $username does not exist"
@@ -195,7 +232,7 @@ while ($continue) {
                 'Description' = $description
                 }
 
-                #Der Nutzer wird lokal angelegt, einer Nutzergruppe hinzugefügt und es wird im eine Datenbank zugewiesen
+                #Der Nutzer wird lokal angelegt, einer Nutzergruppe hinzugefügt und es wird ihm eine Datenbank zugewiesen
                 Write-Host New-LocalUser -Name $users.Username -Password $users.Password -FullName $users.Name -Description $users.Description
                 Write-Host Add-LocalGroupMember -Group "Benutzer" -Member $users.Username
                 Write-Host 'C:\xampp\mysql\bin\mysql.exe' -u root -p -e "CREATE DATABASE $users.Username; GRANT ALL PRIVILEGES ON $users.Username .* TO '$users.Username'@'localhost' IDENTIFIED BY '$users.Password';"
@@ -298,6 +335,8 @@ while ($continue) {
 
     # Option 14: Exit
         {$_ -eq "14"} {Write-Host "Exiting..."; $continue = $false}
+        
+    # Default
         default {Write-Host "Invalid choice. Please try again."}
     }
 }
