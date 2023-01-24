@@ -234,9 +234,9 @@ while ($continue) {
                     
                     }
 
-                    Write-Host New-LocalUser -Name $users.Username -Password $users.Password -FullName $users.Name -Description $users.Description
-                    Write-Host Add-LocalGroupMember -Group "Benutzer" -Member $users.Username
-                    Write-Host 'C:\xampp\mysql\bin\mysql.exe' -u root -p -e "CREATE DATABASE $users.Username; GRANT ALL PRIVILEGES ON $users.Username .* TO '$users.Username'@'localhost' IDENTIFIED BY '$users.Password';"
+                    New-LocalUser -Name $users.Username -Password $users.Password -FullName $users.Name -Description $users.Description
+                    Add-LocalGroupMember -Group "Benutzer" -Member $users.Username
+                    'C:\xampp\mysql\bin\mysql.exe' -u root -p -e "CREATE DATABASE $users.Username; GRANT ALL PRIVILEGES ON $users.Username .* TO '$users.Username'@'localhost' IDENTIFIED BY '$users.Password';"
 
                 }
 
