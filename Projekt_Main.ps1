@@ -201,7 +201,7 @@ while ($continue) {
                 & 'C:\xampp\mysql\bin\mysql.exe' -u root -p -e "DROP USER '$username'@'localhost'; DROP DATABASE $username;"
 
                 # Apache Webspace loeschen
-                # Ordner löschen
+                # Ordner loeschen
                 Remove-Item -Path "C:\xampp\htdocs\$username" -Force -Recurse
                 
                 # Apache neustarten
@@ -236,7 +236,56 @@ while ($continue) {
 
                     New-LocalUser -Name $users.Username -Password $users.Password -FullName $users.Name -Description $users.Description
                     Add-LocalGroupMember -Group "Benutzer" -Member $users.Username
-                    'C:\xampp\mysql\bin\mysql.exe' -u root -p -e "CREATE DATABASE $users.Username; GRANT ALL PRIVILEGES ON $users.Username .* TO '$users.Username'@'localhost' IDENTIFIED BY '$users.Password';"
+                    
+                # Datenbank fuer User anlegen
+                & 'C:\xampp\mysql\bin\mysql.exe' -u root -p -e "CREATE DATABASE $username; GRANT ALL PRIVILEGES ON $username.* TO '$username'@'localhost' IDENTIFIED BY '$password';"
+            
+                # Apache Webspace fuer User anlegen
+                # Ordner fuer Webspace anlegen
+                New-Item -ItemType Directory -Path "C:\xampp\htdocs\$username"
+                $Acl = Get-Acl "C:\xampp\htdocs\$username"
+                $Ar = New-Object System.Security.AccessControl.FileSystemAccessRule("$username","Modify","Allow")
+                $Acl.SetAccessRule($Ar)
+                Set-Acl "C:\xampp\htdocs\$username" $Acl
+
+                # Apache config und Win config schreiben
+                Add-Content -Path "C:\xampp\apache\conf\extra\httpd-vhosts.conf" -Value "<VirtualHost *:80>
+    ServerName $username.localhost
+    DocumentRoot ""C:\xampp\htdocs\$username""
+    <Directory ""C:\xampp\htdocs\$username"">
+        Options Indexes FollowSymLinks Includes ExecCGI
+        AllowOverride All
+        Require all granted
+    </Directory>
+</VirtualHost>"
+
+                # Indexfile erstellen
+                New-Item -Path "C:\xampp\htdocs\$username\index.html" -ItemType File
+                Add-Content -Path "C:\xampp\htdocs\$username\index.html" -Value "
+<html>
+
+    <head>
+
+        <title>HTML</title>
+
+        <style type=""text/css"">
+            h1 {font-style: italic;}
+            p {font-weight: bold;}
+        </style>
+
+    </head>
+
+    <body>
+
+        <h1 style=""font-size:64px;"">Index Page</h1>
+    
+        <p style=""font-size:32px;"">Das ist die Index Seite von $username.</p>
+    
+    </body>
+
+</html>"
+
+
 
                 }
 
@@ -276,7 +325,14 @@ while ($continue) {
                                 #Datenbank und MySql Nutzer werden geloescht
                                 Invoke-Sqlcmd -ServerInstance "Localost" -Database $username + "@localhost" -Query "DROP USER [Username]"
 
-                                #Apache Webspace wird beseitigt
+                                
+                                # Apache Webspace loeschen
+                                # Ordner loeschen
+                                Remove-Item -Path "C:\xampp\htdocs\$username" -Force -Recurse
+                
+                                # Apache neustarten
+                                net stop Apache2.4
+                                net start Apache2.4
        
                             }else{
                                 
