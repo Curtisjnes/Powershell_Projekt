@@ -19,11 +19,11 @@ Erstellen Sie ein Skript mit folgender Funktionalität:
       -->bekommt automatisch einen Datenbank auf MySQL (Done)
       -->bekommt automatisch einen Webspace auf XAMPP (Apache, mit Begrüßungs-HTML-Seite nach Vorgabe) (In Progress)
       
-    ->mehrere User anlegen (lokal) nach Liste einer Datei (Done / In Progress) Apache fehlt
+    ->mehrere User anlegen (lokal) nach Liste einer Datei (To Change) .txt Dateien müssen noch Supportet werden
     
-    ->einen User löschen (mit dem Löschen aller Dateien) (Done/In Progress) Apache fehlt
+    ->einen User löschen (mit dem Löschen aller Dateien) (Done)
     
-    ->mehrere User löschen (mit dem Löschen aller Dateien) (Done / In Progress) Apache Fehlt
+    ->mehrere User löschen (mit dem Löschen aller Dateien) (Done)
     
     ->Netzwerktest (Ping-Test, Traceroute-Test) (Done)
     

@@ -179,7 +179,7 @@ while ($continue) {
                 & 'C:\xampp\mysql\bin\mysql.exe' -u root -p -e "DROP USER '$username'@'localhost'; DROP DATABASE $username;"
 
                 # Apache Webspace loeschen
-                # Ordner löschen
+                # Ordner loeschen
                 Remove-Item -Path "C:\xampp\htdocs\$username" -Force -Recurse
                 
 #ToDo           # Apache config und Win config löschen
@@ -206,6 +206,7 @@ while ($continue) {
 
            if($dateiformat -eq "0"){
            
+<<<<<<< HEAD
                $path = Read-Host "Please enter the path of your csv doc"
            
          
@@ -222,6 +223,21 @@ while ($continue) {
                 $password = $line.Passwort
 
                 $description = $line.Beschreibung
+=======
+           # Datei wird in einer Variable gespeichert
+           $csv = Import-Csv -Path $path -Delimiter ";"
+           
+           # Es wird ein Array Instanziiert, welcher später alle User-Daten speichern soll
+           $users = @()
+
+           # Jede Zeile der CSV-Datei wird eingelesen und in unterschiedlichen Parametern gespeichert, je nachdem in welche Spalte die Informationen stehen
+           foreach ($line in $csv) {
+            
+            $username = $line.Username
+            $name = $line.Name
+            $password = $line.Passwort
+            $description = $line.Beschreibung
+>>>>>>> fa9f030ed0484cef22e6d438c18cc49633469a9d
 
                 $users += New-Object PSObject -Property @{
                     'Username' = $username
