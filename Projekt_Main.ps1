@@ -152,10 +152,32 @@ while ($continue) {
         Require all granted
     </Directory>
 </VirtualHost>"
-                # Add-Content -Path "C:\Windows\System32\drivers\etc\hosts" -Value "127.0.0.1 $username.localhost"
 
                 # Indexfile erstellen
+                New-Item -Path "C:\xampp\htdocs\$username\index.html" -ItemType File
+                Add-Content -Path "C:\xampp\htdocs\$username\index.html" -Value "
+<html>
 
+    <head>
+
+        <title>HTML</title>
+
+        <style type=""text/css"">
+            h1 {font-style: italic;}
+            p {font-weight: bold;}
+        </style>
+
+    </head>
+
+    <body>
+
+        <h1 style=""font-size:64px;"">Index Page</h1>
+    
+        <p style=""font-size:32px;"">Das ist die Index Seite von $username.</p>
+    
+    </body>
+
+</html>"
 
                 # Apache neustarten
                 net stop Apache2.4
@@ -179,16 +201,9 @@ while ($continue) {
                 & 'C:\xampp\mysql\bin\mysql.exe' -u root -p -e "DROP USER '$username'@'localhost'; DROP DATABASE $username;"
 
                 # Apache Webspace loeschen
-                # Ordner loeschen
+                # Ordner löschen
                 Remove-Item -Path "C:\xampp\htdocs\$username" -Force -Recurse
                 
-#ToDo           # Apache config und Win config löschen
-                $file = 'C:\xampp\apache\conf\extra\httpd-vhosts.conf'
-                $search = '<VirtualHost \*:80>\n    ServerName test.localhost(\n.*)*<\/VirtualHost>'
-                $content = Get-Content $file
-                $content = $content -replace $search,''
-                $content | Out-File $file
-
                 # Apache neustarten
                 net stop Apache2.4
                 net start Apache2.4
