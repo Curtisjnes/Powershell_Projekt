@@ -200,42 +200,50 @@ while ($continue) {
 
     # Option 10: Nutzer aus Datei anlegen
         {$_ -eq "10"} {Write-Host "You chose $($options[9])"
-           #Abfrage nach Dateipfad
-           $path = Read-Host "Please enter the path of your csv doc"
+
+
+           $dateiformat = Read-Host "Handelt es sich um eine CSV oder eine Textdatei ? 0/1"
+
+           if($dateiformat -eq "0"){
            
-           #Datei wird in einer Variable gespeichert
-           $csv = Import-Csv -Path $path -Delimiter ";"
+               $path = Read-Host "Please enter the path of your csv doc"
            
-           #es wird ein Array Instanziiert, welcher später alle User-Daten speichern soll
-           $users = @()
+         
+               $csv = Import-Csv -Path $path -Delimiter ";"
+           
+               $users = @()
 
-           #Jede Zeile der CSV-Datei wird eingelesen und in unterschiedlichen Parametern gespeichert, je nachdem in welche Spalte die Informationen stehen
-           foreach ($line in $csv) {
+               foreach ($line in $csv) {
             
-            #Alles was in der Spalte Username steht wird in der username Variable gespeichert
-            $username = $line.Username
+                $username = $line.Username
             
-            #Alles was in der Spalte Name steht wird in der name Variable gespeichert
-            $name = $line.Name
+                $name = $line.Name
 
-            #Alles was in der Passwort spalte steht wird in der password Variable gespeichtert
-            $password = $line.Passwort
+                $password = $line.Passwort
 
-            #Alles was in der Beschreibung steht wird in der description Variable gespeichert
-            $description = $line.Beschreibung
+                $description = $line.Beschreibung
 
-            #Die Variablen werden dem Array zugewiesen
-            $users += New-Object PSObject -Property @{
-                'Username' = $username
-                'Name' = $name
-                'Password' = $password
-                'Description' = $description
+                $users += New-Object PSObject -Property @{
+                    'Username' = $username
+                    'Name' = $name
+                    'Password' = $password
+                    'Description' = $description
+                    }
+
+                    Write-Host New-LocalUser -Name $users.Username -Password $users.Password -FullName $users.Name -Description $users.Description
+                    Write-Host Add-LocalGroupMember -Group "Benutzer" -Member $users.Username
+                    Write-Host 'C:\xampp\mysql\bin\mysql.exe' -u root -p -e "CREATE DATABASE $users.Username; GRANT ALL PRIVILEGES ON $users.Username .* TO '$users.Username'@'localhost' IDENTIFIED BY '$users.Password';"
+
                 }
-
-                #Der Nutzer wird lokal angelegt, einer Nutzergruppe hinzugefügt und es wird ihm eine Datenbank zugewiesen
-                Write-Host New-LocalUser -Name $users.Username -Password $users.Password -FullName $users.Name -Description $users.Description
-                Write-Host Add-LocalGroupMember -Group "Benutzer" -Member $users.Username
-                Write-Host 'C:\xampp\mysql\bin\mysql.exe' -u root -p -e "CREATE DATABASE $users.Username; GRANT ALL PRIVILEGES ON $users.Username .* TO '$users.Username'@'localhost' IDENTIFIED BY '$users.Password';"
+            }else{
+                $path = Read-Host "Please enter the path of your .txt doc"
+                $daten = Get-Content $path
+                $users = @()
+                $chars = @()
+                foreach($userinfo in $daten){
+                    
+                
+                }
 
             }
 
