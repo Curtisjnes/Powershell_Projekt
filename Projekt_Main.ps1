@@ -201,29 +201,6 @@ while ($continue) {
     # Option 10: Nutzer aus Datei anlegen
         {$_ -eq "10"} {Write-Host "You chose $($options[9])"
 
-
-           $dateiformat = Read-Host "Handelt es sich um eine CSV oder eine Textdatei ? 0/1"
-
-           if($dateiformat -eq "0"){
-           
-<<<<<<< HEAD
-               $path = Read-Host "Please enter the path of your csv doc"
-           
-         
-               $csv = Import-Csv -Path $path -Delimiter ";"
-           
-               $users = @()
-
-               foreach ($line in $csv) {
-            
-                $username = $line.Username
-            
-                $name = $line.Name
-
-                $password = $line.Passwort
-
-                $description = $line.Beschreibung
-=======
            # Datei wird in einer Variable gespeichert
            $csv = Import-Csv -Path $path -Delimiter ";"
            
@@ -234,16 +211,12 @@ while ($continue) {
            foreach ($line in $csv) {
             
             $username = $line.Username
-            $name = $line.Name
             $password = $line.Passwort
-            $description = $line.Beschreibung
->>>>>>> fa9f030ed0484cef22e6d438c18cc49633469a9d
 
                 $users += New-Object PSObject -Property @{
-                    'Username' = $username
-                    'Name' = $name
+                    'Username' = $username 
                     'Password' = $password
-                    'Description' = $description
+                    
                     }
 
                     Write-Host New-LocalUser -Name $users.Username -Password $users.Password -FullName $users.Name -Description $users.Description
@@ -251,22 +224,9 @@ while ($continue) {
                     Write-Host 'C:\xampp\mysql\bin\mysql.exe' -u root -p -e "CREATE DATABASE $users.Username; GRANT ALL PRIVILEGES ON $users.Username .* TO '$users.Username'@'localhost' IDENTIFIED BY '$users.Password';"
 
                 }
-            }else{
-                $path = Read-Host "Please enter the path of your .txt doc"
-                $daten = Get-Content $path
-                $users = @()
-                $chars = @()
-                foreach($userinfo in $daten){
-                    
-                
-                }
 
             }
 
-           
-        
-        
-        }
 
     # Option 11: Nutzer aus Datei loeschen
         {$_ -eq "11"} {Write-Host "You chose $($options[10])"
@@ -289,9 +249,6 @@ while ($continue) {
                         
                         $usernames = $spalte -split " "
                         
-                        Write-Host "Spaltenname: $spaltenname"
-                        
-                        #Jeder Spalteneintrag wird in einer Variable gespeichert, und überprüft,
                         #ob der Nutzername einem Nutzer auf dem Rechner entspricht
                         foreach ($username in $usernames) {
                         
