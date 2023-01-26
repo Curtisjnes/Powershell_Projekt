@@ -17,7 +17,7 @@ Erstellen Sie ein Skript mit folgender Funktionalität:
     ->einen User anlegen (lokal) nach Eingabe der Userdaten (Tastatur)
       -->bekommt automatisch Passwort (Done)
       -->bekommt automatisch einen Datenbank auf MySQL (Done)
-      -->bekommt automatisch einen Webspace auf XAMPP (Apache, mit Begrüßungs-HTML-Seite nach Vorgabe) (In Progress)
+      -->bekommt automatisch einen Webspace auf XAMPP (Apache, mit Begrüßungs-HTML-Seite nach Vorgabe) (Done)
       
     ->mehrere User anlegen (lokal) nach Liste einer Datei (Done) .txt Dateien müssen noch Supportet werden
     
