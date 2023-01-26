@@ -19,7 +19,7 @@ Erstellen Sie ein Skript mit folgender Funktionalität:
       -->bekommt automatisch einen Datenbank auf MySQL (Done)
       -->bekommt automatisch einen Webspace auf XAMPP (Apache, mit Begrüßungs-HTML-Seite nach Vorgabe) (In Progress)
       
-    ->mehrere User anlegen (lokal) nach Liste einer Datei (To Change) .txt Dateien müssen noch Supportet werden
+    ->mehrere User anlegen (lokal) nach Liste einer Datei (Done) .txt Dateien müssen noch Supportet werden
     
     ->einen User löschen (mit dem Löschen aller Dateien) (Done)
     
@@ -29,13 +29,13 @@ Erstellen Sie ein Skript mit folgender Funktionalität:
     
 Abzugeben:
 
-Skript (In Progress)
+Skript (Done)
 
-Dokumentation (To Do)
+Dokumentation (Done)
 
-  ->Kurze Erklärung in Textform (To Do)
+  ->Kurze Erklärung in Textform (Done)
 
-  ->Alle Skriptteile visualisiert PAPs (To Do)
+  ->Alle Skriptteile visualisiert PAPs (Done)
 
 Aufgabenverteilung:
 
